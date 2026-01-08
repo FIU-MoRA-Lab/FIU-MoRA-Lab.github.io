@@ -1,4 +1,8 @@
 ---
+import { Image } from "astro:assets";
+import fiuBlack from "../assets/img/fiu/fiu-black.png";
+import fiuWhite from "../assets/img/fiu/fiu-white.png";
+
 const currentYear = new Date().getFullYear();
 ---
 
@@ -26,16 +30,16 @@ const currentYear = new Date().getFullYear();
                         class="block w-fit mx-auto md:mx-0"
                     >
                         <!-- Light Mode Logo - Smaller on mobile -->
-                        <img
-                            src="/img/fiu/fiu-black.png"
+                        <Image
+                            src={fiuBlack}
                             alt="Florida International University"
-                            class="h-8 md:h-10 mb-4 block dark:hidden"
+                            class="h-8 md:h-10 mb-4 block dark:hidden w-auto"
                         />
                         <!-- Dark Mode Logo - Smaller on mobile -->
-                        <img
-                            src="/img/fiu/fiu-white.png"
+                        <Image
+                            src={fiuWhite}
                             alt="Florida International University"
-                            class="h-8 md:h-10 mb-4 hidden dark:block"
+                            class="h-8 md:h-10 mb-4 hidden dark:block w-auto"
                         />
                     </a>
 

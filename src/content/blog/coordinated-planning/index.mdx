@@ -9,13 +9,17 @@ authors:
   - "Dylan A. Shell"
 ---
 
+import { Image } from "astro:assets";
+
 {/* Main Image */}
 <div class="mb-12 flex justify-center not-prose">
-    <img
-        src="/assets/projects/weaselball.png" 
+    <Image
+        src="https://placehold.co/1200x800?text=Coordinated+Planning" 
         alt="Coordinated Planning"
         class="rounded-lg shadow-md w-full max-w-3xl h-auto"
         loading="eager"
+        width={1200}
+        height={800}
     />
 </div>
 

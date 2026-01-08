@@ -9,12 +9,13 @@ authors:
   - "Dylan A. Shell"
 ---
 
+import { Image } from "astro:assets";
 import project1Img from "./imgs/project1.png";
 
 {/* Main Image */}
 <div class="mb-12 flex justify-center not-prose">
-    <img
-        src={project1Img.src}
+    <Image
+        src={project1Img}
         alt="Privacy Preserving Task Allocation"
         class="rounded-lg shadow-md w-full max-w-3xl h-auto"
         loading="eager"

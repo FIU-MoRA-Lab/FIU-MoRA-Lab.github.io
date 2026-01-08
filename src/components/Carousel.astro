@@ -1,5 +1,5 @@
 ---
-
+import { Image } from "astro:assets";
 
 interface Props {
     projects: any[]; // Type should ideally be imported but 'any' avoids circular dep issues for now or we can structure strictly
@@ -58,10 +58,11 @@ const { projects } = Astro.props;
             projects.map((project, index) => (
                 <div class="carousel-slide relative flex-shrink-0 w-full h-full snap-center overflow-hidden bg-black">
                     <!-- Background Image -->
-                    <img
+                    <Image
                         src={project.data.image}
                         alt={project.data.title}
                         class="absolute inset-0 w-full h-full object-cover opacity-70"
+                        inferSize={true}
                     />
                     
                     <!-- Gradient Overlay -->

@@ -8,10 +8,13 @@ authors:
   - "Leonardo Bobadilla"
 ---
 
+import { Image } from "astro:assets";
+import projectImg from "./imgs/project2-1.png";
+
 {/* Main Image */}
 <div class="mb-12 flex justify-center not-prose">
-    <img
-        src="https://webs.cs.fiu.edu/robotics/wp-content/uploads/sites/36/2023/05/project2-1.png"
+    <Image
+        src={projectImg}
         alt="Project Overview"
         class="rounded-lg shadow-md w-full max-w-3xl h-auto"
         loading="eager"

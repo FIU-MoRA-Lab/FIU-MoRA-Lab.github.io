@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+
 interface Props {
     project: {
         title: string;
@@ -28,10 +30,11 @@ const { project, compact = false } = Astro.props;
             compact ? "md:w-48 lg:w-64" : "md:w-64 lg:w-80",
         ]}
     >
-        <img
+        <Image
             src={project.image}
             alt={project.title}
             class="w-full h-auto object-cover grayscale hover:grayscale-0 transition-all duration-500 rounded-sm shadow-sm"
+            inferSize={true}
         />
     </div>
 

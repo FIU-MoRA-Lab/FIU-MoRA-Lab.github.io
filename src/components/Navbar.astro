@@ -10,7 +10,7 @@ const links = pageFiles
     .filter(file => file.isFile() && file.name.endsWith('.astro'))
     .map(file => {
         const name = file.name.replace('.astro', '');
-        const href = name === 'index' ? '/' : `/${name}`;
+        const href = name === 'index' ? '/' : `${name}`;
         const label = name === 'index' 
             ? 'Home' 
             : name.charAt(0).toUpperCase() + name.slice(1);

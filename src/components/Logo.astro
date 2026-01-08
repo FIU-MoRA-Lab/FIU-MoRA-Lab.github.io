@@ -1,4 +1,8 @@
 ---
+import { Image } from "astro:assets";
+import fiuBlack from "../assets/img/fiu/fiu-black.png";
+import fiuWhite from "../assets/img/fiu/fiu-white.png";
+
 interface Props {
     forceTheme?: "light" | "dark";
 }
@@ -12,8 +16,8 @@ const { forceTheme } = Astro.props;
 >
     <!-- FIU Logo Container -->
     <div class="relative w-12 h-12 flex items-center justify-center">
-        <img
-            src="/img/fiu/fiu-black.png"
+        <Image
+            src={fiuBlack}
             alt="FIU Logo"
             class:list={[
                 "absolute inset-0 w-full h-full object-contain transition-opacity duration-300",
@@ -24,8 +28,8 @@ const { forceTheme } = Astro.props;
                       : "dark:opacity-0",
             ]}
         />
-        <img
-            src="/img/fiu/fiu-white.png"
+        <Image
+            src={fiuWhite}
             alt="FIU Logo"
             class:list={[
                 "absolute inset-0 w-full h-full object-contain transition-opacity duration-300",
