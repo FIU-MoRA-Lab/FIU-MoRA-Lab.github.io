@@ -4,8 +4,8 @@
 
 @layer base {
     :root {
-        /* Light Mode (Stone-50 / Gray-900) */
-        --color-bg-primary: #f2f2f2;
+        /* Light Mode (Neutral-50 / Gray-900) - Soft White */
+        --color-bg-primary: #fafafa;
         --color-text-primary: #111827;
         --color-border: #e5e7eb;
 
@@ -13,8 +13,8 @@
         --color-nav-text-active: #111827;
         --color-nav-text-inactive: #4b5563;
 
-        /* Electric Teal (Teal-600) */
-        --color-highlight: #0d9488;
+        /* Soft Teal - Professional/Ocean */
+        --color-highlight: #2a9d8f;
     }
 
     /* Dark Mode (Neutral-900 / Neutral-50) */
@@ -26,8 +26,8 @@
         --color-nav-text-active: #ffffff;
         --color-nav-text-inactive: #d4d4d4;
 
-        /* Electric Teal (Teal-400) */
-        --color-highlight: #2dd4bf;
+        /* Soft Flamingo Pink */
+        --color-highlight: #ff8fab;
     }
 
     body {

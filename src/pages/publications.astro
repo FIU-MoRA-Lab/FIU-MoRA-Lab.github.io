@@ -38,7 +38,7 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
         <div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 items-start">
             <div id="author-filters" class="w-full md:col-span-2">
                 <details class="group">
-                    <summary class="flex items-center justify-between cursor-pointer list-none select-none mb-4 bg-gray-50 dark:bg-neutral-900 p-2 rounded-lg" style="cursor: pointer;">
+                    <summary class="flex items-center justify-between cursor-pointer list-none select-none mb-4 bg-neutral-50 dark:bg-neutral-900 p-2 rounded-lg" style="cursor: pointer;">
                         <h2 class="text-lg text-gray-700 dark:text-gray-200 transition-[font-variation-settings,color] duration-200 [font-variation-settings:'wght'_600] group-hover:[font-variation-settings:'wght'_700] group-hover:text-[var(--color-highlight)] dark:group-hover:text-[var(--color-highlight)] pl-2">
                             Filter by Author
                         </h2>
@@ -57,7 +57,7 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
                             <path d="m6 9 6 6 6-6"></path>
                         </svg>
                     </summary>
-                    <div class="flex flex-wrap gap-1 md:gap-2 p-4 rounded-lg bg-gray-50 dark:bg-neutral-900 animate-in fade-in zoom-in-95 duration-200 mt-2">
+                    <div class="flex flex-wrap gap-1 md:gap-2 p-4 rounded-lg bg-neutral-50 dark:bg-neutral-900 animate-in fade-in zoom-in-95 duration-200 mt-2">
                         {
                             authors.map((author) => {
                                 // Pre-calculate rgba for inline styles to ensure consistnecy with the script logic
@@ -77,7 +77,7 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
                                             class="author-checkbox peer sr-only"
                                         />
                                         <span 
-                                            class="author-chip block px-2 py-1 text-sm rounded transition-all duration-200 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-neutral-900 font-medium"
+                                            class="author-chip block px-2 py-1 text-sm rounded transition-all duration-200 text-gray-700 dark:text-gray-300 bg-[#fafafa] dark:bg-neutral-900 font-medium"
                                             style={`--author-color: ${author.color}; --author-bg: ${rgba};`}
                                         >
                                             {author.name}
@@ -85,14 +85,12 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
                                         <style>
                                             /* Apply hover effects only when NOT checked */
                                             input:not(:checked) + .author-chip:hover {
-                                                background-color: rgb(229 231 235) !important; /* hover:bg-gray-200 */
+                                                background-color: #e0e0e0 !important;
                                             }
                                             
                                             /* Dark mode hover - only when NOT checked */
-                                            @media (prefers-color-scheme: dark) {
-                                                input:not(:checked) + .author-chip:hover {
-                                                    background-color: rgb(38 38 38) !important; /* dark:hover:bg-neutral-800 */
-                                                }
+                                            :root.dark input:not(:checked) + .author-chip:hover {
+                                                background-color: rgb(38 38 38) !important; /* dark:hover:bg-neutral-800 */
                                             }
                                             
                                             /* Inline style for dynamic peer-checked behavior with specific colors */
@@ -112,7 +110,7 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
 
             <div id="year-filters" class="w-full">
                 <details class="group">
-                    <summary class="flex items-center justify-between cursor-pointer list-none select-none mb-4 bg-gray-50 dark:bg-neutral-900 p-2 rounded-lg" style="cursor: pointer;">
+                    <summary class="flex items-center justify-between cursor-pointer list-none select-none mb-4 bg-neutral-50 dark:bg-neutral-900 p-2 rounded-lg" style="cursor: pointer;">
                         <h2 class="text-lg text-gray-700 dark:text-gray-200 transition-[font-variation-settings,color] duration-200 [font-variation-settings:'wght'_600] group-hover:[font-variation-settings:'wght'_700] group-hover:text-[var(--color-highlight)] dark:group-hover:text-[var(--color-highlight)] pl-2">
                             Filter by Year
                         </h2>
@@ -131,7 +129,7 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
                             <path d="m6 9 6 6 6-6"></path>
                         </svg>
                     </summary>
-                    <div class="flex flex-wrap gap-1 md:gap-2 p-4 rounded-lg bg-gray-50 dark:bg-neutral-900 animate-in fade-in zoom-in-95 duration-200 mt-2">
+                    <div class="flex flex-wrap gap-1 md:gap-2 p-4 rounded-lg bg-neutral-50 dark:bg-neutral-900 animate-in fade-in zoom-in-95 duration-200 mt-2">
                         {
                             years.map((year) => (
                                 <label class="relative cursor-pointer select-none">
@@ -140,23 +138,21 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
                                         value={year}
                                         class="year-checkbox peer sr-only"
                                     />
-                                    <span class="year-chip block px-3 py-1 text-sm rounded-full transition-all duration-200 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-neutral-900 peer-checked:bg-gray-800 peer-checked:text-white dark:peer-checked:bg-gray-200 dark:peer-checked:text-black text-center" style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">
+                                    <span class="year-chip block px-3 py-1 text-sm rounded-full transition-all duration-200 text-gray-700 dark:text-gray-300 bg-[#fafafa] dark:bg-neutral-900 peer-checked:bg-gray-800 peer-checked:text-white dark:peer-checked:bg-gray-200 dark:peer-checked:text-black text-center" style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">
                                         {year}
                                     </span>
                                     <style>
                                         /* Apply hover effects only when NOT checked */
                                         input:not(:checked) + .year-chip:hover {
-                                            background-color: rgb(229 231 235) !important; /* light gray background on hover */
+                                            background-color: #e0e0e0 !important;
                                             color: rgb(0 0 0) !important; /* BLACK text on hover */
                                             font-weight: 800;
                                         }
                                         
                                         /* Dark mode hover - only when NOT checked */
-                                        @media (prefers-color-scheme: dark) {
-                                            input:not(:checked) + .year-chip:hover {
-                                                background-color: rgb(38 38 38) !important; /* dark:hover:bg-neutral-800 */
-                                                color: rgb(255 255 255) !important; /* white text on hover in dark mode */
-                                            }
+                                        :root.dark input:not(:checked) + .year-chip:hover {
+                                            background-color: rgb(38 38 38) !important; /* dark:hover:bg-neutral-800 */
+                                            color: rgb(255 255 255) !important; /* white text on hover in dark mode */
                                         }
                                         
                                         /* Checked state always has bold font */
