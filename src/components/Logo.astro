@@ -12,7 +12,7 @@ const { forceTheme } = Astro.props;
 
 <a
     href="/"
-    class="group flex items-center gap-4 text-decoration-none transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(13,148,136,0.6)] dark:hover:drop-shadow-[0_0_8px_rgba(45,212,191,0.6)]"
+    class="group flex items-center gap-4 text-decoration-none transition-all duration-300"
 >
     <!-- FIU Logo Container -->
     <div class="relative w-12 h-12 flex items-center justify-center">
@@ -45,7 +45,7 @@ const { forceTheme } = Astro.props;
     <!-- Vertical Separator -->
     <div
         class:list={[
-            "h-10 w-px transition-colors duration-300 group-hover:bg-black dark:group-hover:bg-white",
+            "h-10 w-px transition-colors duration-300",
             forceTheme === "light"
                 ? "bg-black"
                 : forceTheme === "dark"
@@ -58,7 +58,7 @@ const { forceTheme } = Astro.props;
     <!-- MoRA Lab Text -->
     <span
         class:list={[
-            "text-xl md:text-2xl tracking-tight transition-colors duration-300 group-hover:text-black dark:group-hover:text-white",
+            "text-xl md:text-2xl tracking-tight transition-colors duration-300",
             forceTheme === "light"
                 ? "text-gray-900"
                 : forceTheme === "dark"

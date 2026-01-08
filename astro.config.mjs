@@ -14,4 +14,7 @@ export default defineConfig({
   },
 
   integrations: [mdx()],
+  image: {
+    domains: ['webs.cs.fiu.edu', 'placehold.co'],
+  },
 });

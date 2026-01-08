@@ -27,10 +27,10 @@ const projects = defineCollection({
 
 const team = defineCollection({
     type: 'content',
-    schema: z.object({
+    schema: ({ image }) => z.object({
         name: z.string(),
         title: z.string(),
-        image: z.string(),
+        image: image(),
         bio: z.string(),
         role: z.enum(['faculty', 'graduate', 'undergraduate', 'collaborators', 'alumni']),
         links: z.array(z.object({
