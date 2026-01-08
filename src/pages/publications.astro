@@ -77,12 +77,24 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
                                             class="author-checkbox peer sr-only"
                                         />
                                         <span 
-                                            class="author-chip block px-2 py-1 text-sm rounded transition-all duration-200 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-neutral-900 hover:bg-gray-200 dark:hover:bg-neutral-800 font-medium"
+                                            class="author-chip block px-2 py-1 text-sm rounded transition-all duration-200 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-neutral-900 font-medium"
                                             style={`--author-color: ${author.color}; --author-bg: ${rgba};`}
                                         >
                                             {author.name}
                                         </span>
                                         <style>
+                                            /* Apply hover effects only when NOT checked */
+                                            input:not(:checked) + .author-chip:hover {
+                                                background-color: rgb(229 231 235) !important; /* hover:bg-gray-200 */
+                                            }
+                                            
+                                            /* Dark mode hover - only when NOT checked */
+                                            @media (prefers-color-scheme: dark) {
+                                                input:not(:checked) + .author-chip:hover {
+                                                    background-color: rgb(38 38 38) !important; /* dark:hover:bg-neutral-800 */
+                                                }
+                                            }
+                                            
                                             /* Inline style for dynamic peer-checked behavior with specific colors */
                                             input:checked + .author-chip {
                                                 background-color: var(--author-bg) !important;
@@ -128,11 +140,26 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
                                         value={year}
                                         class="year-checkbox peer sr-only"
                                     />
-                                    <span class="year-chip block px-3 py-1 text-sm rounded-full transition-all duration-200 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-neutral-900 hover:bg-gray-200 dark:hover:bg-neutral-800 peer-checked:bg-gray-800 peer-checked:text-white dark:peer-checked:bg-gray-200 dark:peer-checked:text-black text-center" style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">
+                                    <span class="year-chip block px-3 py-1 text-sm rounded-full transition-all duration-200 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-neutral-900 peer-checked:bg-gray-800 peer-checked:text-white dark:peer-checked:bg-gray-200 dark:peer-checked:text-black text-center" style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">
                                         {year}
                                     </span>
                                     <style>
-                                        .year-chip:hover,
+                                        /* Apply hover effects only when NOT checked */
+                                        input:not(:checked) + .year-chip:hover {
+                                            background-color: rgb(229 231 235) !important; /* light gray background on hover */
+                                            color: rgb(0 0 0) !important; /* BLACK text on hover */
+                                            font-weight: 800;
+                                        }
+                                        
+                                        /* Dark mode hover - only when NOT checked */
+                                        @media (prefers-color-scheme: dark) {
+                                            input:not(:checked) + .year-chip:hover {
+                                                background-color: rgb(38 38 38) !important; /* dark:hover:bg-neutral-800 */
+                                                color: rgb(255 255 255) !important; /* white text on hover in dark mode */
+                                            }
+                                        }
+                                        
+                                        /* Checked state always has bold font */
                                         input:checked + .year-chip {
                                             font-weight: 800;
                                         }
@@ -151,103 +178,125 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
 
 <script>
     function initPublications() {
-        // Re-select elements on every navigation
-        const authorCheckboxes = document.querySelectorAll(".author-checkbox");
-        const yearCheckboxes = document.querySelectorAll(".year-checkbox");
-        const publications = document.querySelectorAll(".publication-item");
-        const yearSections = document.querySelectorAll(".year-section");
+        // Wait for DOM elements to be available
+        // Use requestAnimationFrame to ensure rendering is complete
+        requestAnimationFrame(() => {
+            // Re-select elements on every navigation
+            const authorCheckboxes = document.querySelectorAll(".author-checkbox");
+            const yearCheckboxes = document.querySelectorAll(".year-checkbox");
+            const publications = document.querySelectorAll(".publication-item");
+            const yearSections = document.querySelectorAll(".year-section");
 
-        function updateFilters() {
-            // Get selected authors and their colors
-            const selectedAuthorSlugs: string[] = [];
-            const authorColors: Record<string, string> = {};
+            // Defensive check: ensure critical elements exist before proceeding
+            if (publications.length === 0) {
+                console.warn("Publication items not found, trying again...");
+                // Retry after a short delay if elements aren't available yet
+                setTimeout(initPublications, 50);
+                return;
+            }
 
-            authorCheckboxes.forEach((cb) => {
-                const input = cb as HTMLInputElement;
-                if (input.checked) {
-                    const slug = input.value;
-                    selectedAuthorSlugs.push(slug);
-                    authorColors[slug] = input.dataset.color || "";
-                }
-            });
+            function updateFilters() {
+                // Get selected authors and their colors
+                const selectedAuthorSlugs: string[] = [];
+                const authorColors: Record<string, string> = {};
 
-            // Get selected years
-            const selectedYears = Array.from(yearCheckboxes)
-                .filter((cb) => (cb as HTMLInputElement).checked)
-                .map((cb) => (cb as HTMLInputElement).value);
-
-            // Filter items
-            publications.forEach((item) => {
-                const el = item as HTMLElement;
-                const authors = JSON.parse(el.dataset.authors || "[]");
-                
-                const yearSection = el.closest(".year-section") as HTMLElement;
-                const itemYear = yearSection ? yearSection.dataset.year : "";
-
-                const authorMatch =
-                    selectedAuthorSlugs.length === 0 ||
-                    authors.some((author: string) =>
-                        selectedAuthorSlugs.includes(author),
-                    );
-                const yearMatch =
-                    selectedYears.length === 0 ||
-                    (itemYear && selectedYears.includes(itemYear));
-
-                const shouldShow = authorMatch && yearMatch;
-
-                el.style.display = shouldShow ? "" : "none";
-
-                // Toggle highlights
-                const authorSpans = el.querySelectorAll(".author-name");
-                authorSpans.forEach((span) => {
-                    const elSpan = span as HTMLElement;
-                    const spanSlug = elSpan.dataset.authorSlug;
-                    
-                    // Reset styles first
-                    elSpan.style.backgroundColor = "";
-                    elSpan.style.color = "";
-                    elSpan.style.padding = "";
-                    elSpan.classList.remove("rounded", "font-medium", "text-white");
-
-                    if (spanSlug && selectedAuthorSlugs.includes(spanSlug)) {
-                        // Apply specific color pill
-                        const color = authorColors[spanSlug];
-                        
-                        // Simple hex to rgba inline
-                        const r = parseInt(color.slice(1, 3), 16);
-                        const g = parseInt(color.slice(3, 5), 16);
-                        const b = parseInt(color.slice(5, 7), 16);
-                        
-                        elSpan.style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.15)`;
-                        elSpan.style.color = color;
-                        elSpan.style.cursor = "default";
-                        elSpan.style.padding = "0.125rem 0.25rem";
-                        
-                        elSpan.classList.add("rounded", "font-medium");
-                        // Remove global highlight class
-                        elSpan.classList.remove("text-[var(--color-highlight)]", "font-bold");
-                    } else if (spanSlug) {
-                         // Ensure global class isn't stuck
-                         elSpan.classList.remove("text-[var(--color-highlight)]", "font-bold");
+                authorCheckboxes.forEach((cb) => {
+                    const input = cb as HTMLInputElement;
+                    if (input.checked) {
+                        const slug = input.value;
+                        selectedAuthorSlugs.push(slug);
+                        authorColors[slug] = input.dataset.color || "";
                     }
                 });
+
+                // Get selected years
+                const selectedYears = Array.from(yearCheckboxes)
+                    .filter((cb) => (cb as HTMLInputElement).checked)
+                    .map((cb) => (cb as HTMLInputElement).value);
+
+                // Filter items
+                publications.forEach((item) => {
+                    const el = item as HTMLElement;
+                    const authors = JSON.parse(el.dataset.authors || "[]");
+                    
+                    const yearSection = el.closest(".year-section") as HTMLElement;
+                    const itemYear = yearSection ? yearSection.dataset.year : "";
+
+                    const authorMatch =
+                        selectedAuthorSlugs.length === 0 ||
+                        authors.some((author: string) =>
+                            selectedAuthorSlugs.includes(author),
+                        );
+                    const yearMatch =
+                        selectedYears.length === 0 ||
+                        (itemYear && selectedYears.includes(itemYear));
+
+                    const shouldShow = authorMatch && yearMatch;
+
+                    el.style.display = shouldShow ? "" : "none";
+
+                    // Toggle highlights
+                    const authorSpans = el.querySelectorAll(".author-name");
+                    authorSpans.forEach((span) => {
+                        const elSpan = span as HTMLElement;
+                        const spanSlug = elSpan.dataset.authorSlug;
+                        
+                        // Reset styles first
+                        elSpan.style.backgroundColor = "";
+                        elSpan.style.color = "";
+                        elSpan.style.padding = "";
+                        elSpan.classList.remove("rounded", "font-medium", "text-white");
+
+                        if (spanSlug && selectedAuthorSlugs.includes(spanSlug)) {
+                            // Apply specific color pill
+                            const color = authorColors[spanSlug];
+                            
+                            // Simple hex to rgba inline
+                            const r = parseInt(color.slice(1, 3), 16);
+                            const g = parseInt(color.slice(3, 5), 16);
+                            const b = parseInt(color.slice(5, 7), 16);
+                            
+                            elSpan.style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.15)`;
+                            elSpan.style.color = color;
+                            elSpan.style.cursor = "default";
+                            elSpan.style.padding = "0.125rem 0.25rem";
+                            
+                            elSpan.classList.add("rounded", "font-medium");
+                            // Remove global highlight class
+                            elSpan.classList.remove("text-[var(--color-highlight)]", "font-bold");
+                        } else if (spanSlug) {
+                             // Ensure global class isn't stuck
+                             elSpan.classList.remove("text-[var(--color-highlight)]", "font-bold");
+                        }
+                    });
+                });
+
+                // Hide empty years
+                yearSections.forEach((section) => {
+                    const visibleItems = section.querySelectorAll(
+                        ".publication-item:not([style*='display: none'])",
+                    );
+                    (section as HTMLElement).style.display =
+                        visibleItems.length > 0 ? "" : "none";
+                });
+            }
+
+            // Only attach event listeners if we haven't already
+            // Check if listeners are already attached by using a data attribute
+            const isInitialized = document.body.dataset.publicationsInitialized;
+            if (isInitialized) {
+                return;
+            }
+
+            authorCheckboxes.forEach((cb) => {
+                cb.addEventListener("change", updateFilters);
+            });
+            yearCheckboxes.forEach((cb) => {
+                cb.addEventListener("change", updateFilters);
             });
 
-            // Hide empty years
-            yearSections.forEach((section) => {
-                const visibleItems = section.querySelectorAll(
-                    ".publication-item:not([style*='display: none'])",
-                );
-                (section as HTMLElement).style.display =
-                    visibleItems.length > 0 ? "" : "none";
-            });
-        }
-
-        authorCheckboxes.forEach((cb) => {
-            cb.addEventListener("change", updateFilters);
-        });
-        yearCheckboxes.forEach((cb) => {
-            cb.addEventListener("change", updateFilters);
+            // Mark as initialized
+            document.body.dataset.publicationsInitialized = "true";
         });
     }
 
