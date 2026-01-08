@@ -1,0 +1,25 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import Carousel from "../components/Carousel.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
+
+const projects = (await getCollection("projects")).sort(
+    (a: CollectionEntry<"projects">, b: CollectionEntry<"projects">) =>
+        a.data.order - b.data.order,
+);
+---
+
+<Layout>
+    <div class="min-h-screen">
+        <div
+            class="container mx-auto px-4 pt-4 pb-8 md:pt-8 md:pb-16 max-w-6xl"
+        >
+            <PageHeader title="Projects" />
+
+            <div>
+                <Carousel projects={projects} />
+            </div>
+        </div>
+    </div>
+</Layout>

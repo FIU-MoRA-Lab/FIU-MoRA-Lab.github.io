@@ -1,0 +1,88 @@
+---
+import { type Publication, normalizeName } from "../utils/publications";
+
+interface Props {
+    publication: Publication;
+    highlightAuthor?: string;
+}
+
+const { publication: pub, highlightAuthor } = Astro.props;
+
+// Construct the DOI link if it exists
+const doiLink = pub.doi
+    ? pub.doi.startsWith("http")
+        ? pub.doi
+        : `https://doi.org/${pub.doi}`
+    : null;
+
+// Use URL if available, otherwise fall back to DOI link
+const titleLink = pub.url || doiLink;
+
+const authorSlugs = pub.authors.map((author) => normalizeName(author));
+---
+
+<article
+    class="group relative publication-item"
+    data-authors={JSON.stringify(authorSlugs)}
+>
+    <div class="flex flex-col md:flex-row gap-2 md:gap-4 items-baseline">
+        <div class="flex-1">
+            <h3 class="relative mb-2 text-xl md:text-2xl leading-tight">
+                <!-- Spacer: Reserves space for the normal state which is wider -->
+                <span
+                    class="invisible block [font-variation-settings:'wght'_400,'wdth'_100] select-none pointer-events-none"
+                    aria-hidden="true"
+                >
+                    {pub.title}
+                </span>
+                <!-- Visible: Animates over the spacer -->
+                <span
+                    class="absolute top-0 left-0 w-full text-black dark:text-white transition-[font-variation-settings,color,letter-spacing] duration-150 [font-variation-settings:'wght'_400,'wdth'_100] group-hover:[font-variation-settings:'wght'_700,'wdth'_60] group-hover:tracking-tighter group-hover:text-[var(--color-highlight)] dark:group-hover:text-[var(--color-highlight)]"
+                >
+                    {
+                        titleLink ? (
+                            <a
+                                href={titleLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="relative no-underline"
+                            >
+                                {pub.title}
+                            </a>
+                        ) : (
+                            pub.title
+                        )
+                    }
+                </span>
+            </h3>
+            <p class="text-gray-800 dark:text-gray-200 mt-1 text-sm">
+                {
+                    pub.authors.map((author, index) => {
+                        const normalizedAuthor = normalizeName(author);
+                        // legacy server-side highlight check, can keep or remove if fully client-side relying
+                        // keeping it doesn't hurt, but the script will toggle classes too.
+                        const isHighlighted =
+                            highlightAuthor &&
+                            normalizedAuthor.includes(highlightAuthor);
+                        return (
+                            <>
+                                <span
+                                    class={`author-name transition-colors duration-300 ${isHighlighted ? "text-[var(--color-highlight)] font-bold" : ""}`}
+                                    data-author-slug={normalizedAuthor}
+                                >
+                                    {author}
+                                </span>
+                                {index < pub.authors.length - 1 ? " · " : ""}
+                            </>
+                        );
+                    })
+                }
+            </p>
+            <p
+                class="text-gray-600 dark:text-gray-400 italic mt-1 text-xs md:text-sm"
+            >
+                {pub.venue}
+            </p>
+        </div>
+    </div>
+</article>

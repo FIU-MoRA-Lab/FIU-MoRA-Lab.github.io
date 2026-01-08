@@ -1,0 +1,108 @@
+---
+title: "Coordinated multi-robot planning while preserving individual privacy"
+description: "Multiple robots operating concurrently often can achieve their ends more efficiently by cooperating to mediate their use of shared resources."
+authors:
+  - "Li Li"
+  - "Alfredo Bayuelo"
+  - "Leonardo Bobadilla"
+  - "Tauhidul Alam"
+  - "Dylan A. Shell"
+---
+
+{/* Main Image */}
+<div class="mb-12 flex justify-center not-prose">
+    <img
+        src="/assets/projects/weaselball.png" 
+        alt="Coordinated Planning"
+        class="rounded-lg shadow-md w-full max-w-3xl h-auto"
+        loading="eager"
+    />
+</div>
+
+### Motivation
+
+Multiple robots operating concurrently often can achieve their ends more efficiently by cooperating to mediate their use of shared resources. But, as the information that the robots possess is sensitive or restricted, this poses the question of how to preserve individual privacy whilst coordinating. To show the practical feasibility of Secure Multi-Party Computation in Robotics and Autonomous Systems, we examine several particular scenarios where we envision it being relevant to the context of coordination among robots, and propose three secure path intersection protocols:
+
+- A secure path intersection protocol based on the polygon intersection ideas presented in  and simplified to make its implementation feasible using open source software packages.
+- A protocol that ensures that two robots will not collide while executing their task, its software implementation, and hardware proof of concept experiments.
+- A new, secure 3D path collision protocol that can beused in plans involving time or 3D workspaces.
+
+
+For more details, you can check our [paper](https://webs.cs.fiu.edu/robotics/projects/coordinated_multi-robot/icra2019privacy.pdf).
+
+### Details
+
+The below videos demonstrate, using a physical environment and a virtual simulator, how privacy preserving coordination can be used to:
+
+- **Privacy-Preserving Path Intersection:** Given two robots, Alice and Bob with paths PA and PB, inform the robots whether the paths have at least one point of intersection without sharing the path information..
+- **Privacy-Preserving Persistent Monitoring:** Given two robots Alice and Bob that are executing a mission in E, ensure, without sharing any information about their paths or position, that they will not collide.
+- **Secure Rendezvous:** There are two robots, Alice and Bob, and each of them has a timeparametrized trajectory. They want to know if their paths intersect without sharing either respective paths or the intersection point and time
+
+
+### Simulation of Privacy-Preserving 2D Paths
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-12">
+    <div class="aspect-video w-full not-prose">
+        <iframe
+            class="w-full h-full rounded-lg shadow-sm"
+            src="https://www.youtube.com/embed/YQNtMm--uDs?rel=0"
+            frameborder="0"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+        ></iframe>
+    </div>
+    <div class="text-sm text-gray-700 dark:text-gray-300">
+        Two paths consisting of 12 segments each. Four segments from Alice (<span class="text-red-500 font-bold">Red</span>) are securely compared to four segments from Bob (<span class="text-blue-500 font-bold">Blue</span>) we call this a *round*. At time 0:20 they securely determine that no collision exists, so they can move simultaneously. At time 0:40 they securely determine that collision do exists for next round, so they randomly takes turns to move.
+    </div>
+</div>
+
+### Privacy-Preserving Persistent Monitoring
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-12">
+    <div class="aspect-video w-full not-prose">
+        <iframe
+            class="w-full h-full rounded-lg shadow-sm"
+            src="https://www.youtube.com/embed/_IvhFKsRoz8?rel=0"
+            frameborder="0"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+        ></iframe>
+    </div>
+    <div class="text-sm text-gray-700 dark:text-gray-300">
+        An experimental evaluation of the privacy-preserving persistent monitoring task for two parties Alice and Bob using two iRobot Create 2.0.
+    </div>
+</div>
+
+### Simulation of Privacy-Preserving Collision Detection in 3D
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-12">
+    <div class="aspect-video w-full not-prose">
+        <iframe
+            class="w-full h-full rounded-lg shadow-sm"
+            src="https://www.youtube.com/embed/i61WzkKgqI4?rel=0"
+            frameborder="0"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+        ></iframe>
+    </div>
+    <div class="text-sm text-gray-700 dark:text-gray-300">
+        A privacy-preserving persistent monitoring task in a 3D space (2D workspace and time as a dimension). Two paths might collide in different time stamps in 2D, these collisions are discarded by adding time as a 3rd coordinate.
+    </div>
+</div>
+
+### Privacy-Preserving Collision Detection
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-12">
+    <div class="aspect-video w-full not-prose">
+        <iframe
+            class="w-full h-full rounded-lg shadow-sm"
+            src="https://www.youtube.com/embed/0vOYobRlYlA?rel=0"
+            frameborder="0"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+        ></iframe>
+    </div>
+    <div class="text-sm text-gray-700 dark:text-gray-300">
+        An experimental evaluation of the privacy-preserving collision detection in 2D using time as a third coordinate.
+    </div>
+</div>

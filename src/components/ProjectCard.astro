@@ -1,0 +1,84 @@
+---
+interface Props {
+    project: {
+        title: string;
+        image: string;
+        description: string;
+        points?: string[];
+        link?: {
+            url: string;
+            label: string;
+        };
+    };
+    compact?: boolean;
+}
+
+const { project, compact = false } = Astro.props;
+---
+
+<article
+    class:list={[
+        "flex flex-col md:flex-row gap-6 md:gap-8 lg:gap-12",
+        compact ? "pb-4" : "pb-12 md:pb-16 lg:pb-20",
+    ]}
+>
+    <div
+        class:list={[
+            "flex-shrink-0",
+            compact ? "md:w-48 lg:w-64" : "md:w-64 lg:w-80",
+        ]}
+    >
+        <img
+            src={project.image}
+            alt={project.title}
+            class="w-full h-auto object-cover grayscale hover:grayscale-0 transition-all duration-500 rounded-sm shadow-sm"
+        />
+    </div>
+
+    <div class="flex-1 space-y-4 md:space-y-4">
+        <h2
+            class="text-xl md:text-2xl lg:text-3xl font-medium tracking-tight text-black dark:text-white leading-tight"
+        >
+            {project.title}
+        </h2>
+
+        <div
+            class="prose prose-sm md:prose-base max-w-none text-gray-800 dark:text-gray-200 font-light leading-relaxed"
+        >
+            <p>{project.description}</p>
+
+            {
+                project.points && (
+                    <ul class="list-disc pl-5 space-y-2 mt-4">
+                        {project.points.map((point) => (
+                            <li class="pl-2">{point}</li>
+                        ))}
+                    </ul>
+                )
+            }
+        </div>
+
+        {
+            project.link && (
+                <div class="pt-4">
+                    <a
+                        href={project.link.url}
+                        target={
+                            project.link.url.startsWith("/")
+                                ? "_self"
+                                : "_blank"
+                        }
+                        rel={
+                            project.link.url.startsWith("/")
+                                ? ""
+                                : "noopener noreferrer"
+                        }
+                        class="inline-block text-sm uppercase tracking-widest text-black dark:text-white hover:text-[var(--color-highlight)] dark:hover:text-[var(--color-highlight)] transition-colors underline decoration-1 underline-offset-4 hover:decoration-2"
+                    >
+                        {project.link.label} &rarr;
+                    </a>
+                </div>
+            )
+        }
+    </div>
+</article>

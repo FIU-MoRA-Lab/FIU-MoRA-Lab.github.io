@@ -1,0 +1,76 @@
+---
+interface Props {
+    forceTheme?: "light" | "dark";
+}
+
+const { forceTheme } = Astro.props;
+---
+
+<a
+    href="/"
+    class="group flex items-center gap-4 text-decoration-none transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(13,148,136,0.6)] dark:hover:drop-shadow-[0_0_8px_rgba(45,212,191,0.6)]"
+>
+    <!-- FIU Logo Container -->
+    <div class="relative w-12 h-12 flex items-center justify-center">
+        <img
+            src="/img/fiu/fiu-black.png"
+            alt="FIU Logo"
+            class:list={[
+                "absolute inset-0 w-full h-full object-contain transition-opacity duration-300",
+                forceTheme === "light"
+                    ? "opacity-100"
+                    : forceTheme === "dark"
+                      ? "opacity-0"
+                      : "dark:opacity-0",
+            ]}
+        />
+        <img
+            src="/img/fiu/fiu-white.png"
+            alt="FIU Logo"
+            class:list={[
+                "absolute inset-0 w-full h-full object-contain transition-opacity duration-300",
+                forceTheme === "light"
+                    ? "opacity-0"
+                    : forceTheme === "dark"
+                      ? "opacity-100"
+                      : "opacity-0 dark:opacity-100",
+            ]}
+        />
+    </div>
+
+    <!-- Vertical Separator -->
+    <div
+        class:list={[
+            "h-10 w-px transition-colors duration-300 group-hover:bg-black dark:group-hover:bg-white",
+            forceTheme === "light"
+                ? "bg-black"
+                : forceTheme === "dark"
+                  ? "bg-white"
+                  : "bg-black dark:bg-white",
+        ]}
+    >
+    </div>
+
+    <!-- MoRA Lab Text -->
+    <span
+        class:list={[
+            "text-xl md:text-2xl tracking-tight transition-colors duration-300 group-hover:text-black dark:group-hover:text-white",
+            forceTheme === "light"
+                ? "text-gray-900"
+                : forceTheme === "dark"
+                  ? "text-white"
+                  : "text-gray-900 dark:text-white",
+        ]}
+        style="font-family: 'Space Mono', monospace; font-weight: 700;"
+    >
+        MoRA Lab
+    </span>
+</a>
+
+<!-- Google Fonts: Space Mono -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet"
+/>

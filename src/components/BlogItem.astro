@@ -1,0 +1,57 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+    post: CollectionEntry<"blog">;
+}
+
+const { post } = Astro.props;
+
+function formatDate(date: Date | undefined) {
+    if (!date) return "";
+    return new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    }).format(date);
+}
+---
+
+<article class="group relative blog-item">
+    <div class="flex flex-col md:flex-row gap-2 md:gap-4 items-baseline">
+        <div class="flex-1">
+            <h3 class="relative mb-2 text-xl md:text-2xl leading-tight">
+                <!-- Spacer -->
+                <span
+                    class="invisible block [font-variation-settings:'wght'_400,'wdth'_100] select-none pointer-events-none"
+                    aria-hidden="true"
+                >
+                    {post.data.title}
+                </span>
+                <!-- Visible Title -->
+                <span
+                    class="absolute top-0 left-0 w-full text-black dark:text-white transition-[font-variation-settings,color,letter-spacing] duration-150 [font-variation-settings:'wght'_400,'wdth'_100] group-hover:[font-variation-settings:'wght'_700,'wdth'_60] group-hover:tracking-tighter group-hover:text-[var(--color-highlight)] dark:group-hover:text-[var(--color-highlight)]"
+                >
+                    <a
+                        href={`/blog/${post.slug}`}
+                        class="relative no-underline"
+                    >
+                        {post.data.title}
+                    </a>
+                </span>
+            </h3>
+
+            <div class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                {formatDate(post.data.pubDate)}
+            </div>
+
+            {
+                post.data.description && (
+                    <p class="text-gray-800 dark:text-gray-200 mt-1 text-sm md:text-base leading-relaxed">
+                        {post.data.description}
+                    </p>
+                )
+            }
+        </div>
+    </div>
+</article>

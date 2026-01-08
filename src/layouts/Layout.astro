@@ -1,3 +1,11 @@
+---
+import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
+
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+---
+
 <!doctype html>
 <html lang="en">
 	<head>
@@ -5,18 +13,82 @@
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>MoRA Lab</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+			rel="stylesheet"
+		/>
+		<ClientRouter />
+		<script is:inline>
+			const initTheme = () => {
+				const theme = (() => {
+					if (
+						typeof localStorage !== "undefined" &&
+						localStorage.getItem("theme")
+					) {
+						return localStorage.getItem("theme");
+					}
+					if (
+						window.matchMedia("(prefers-color-scheme: dark)")
+							.matches
+					) {
+						return "dark";
+					}
+					return "light";
+				})();
+
+				if (theme === "dark") {
+					document.documentElement.classList.add("dark");
+				} else {
+					document.documentElement.classList.remove("dark");
+				}
+				window.localStorage.setItem("theme", theme);
+			};
+
+			// Run on initial load
+			initTheme();
+
+			// Run on view transitions navigation to ensure persistence
+			document.addEventListener("astro:after-swap", initTheme);
+		</script>
 	</head>
-	<body>
-		<slot />
+	<body
+		class="antialiased font-sans selection:bg-gray-200 selection:text-black"
+	>
+		<Navbar />
+		<main
+			style="width: 800px; max-width: calc(100% - 2rem); margin-inline: auto;"
+			class="md:max-w-[calc(100%-3rem)]"
+		>
+			<slot />
+		</main>
+		<Footer />
 	</body>
 </html>
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
+<style is:global>
+	:root {
+		--font-sans: "Inter", system-ui, sans-serif;
+		--font-serif: "EB Garamond", Georgia, serif;
+	}
+
+	html {
+		font-family: var(--font-sans);
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-family: var(--font-serif);
+		letter-spacing: -0.02em;
 	}
 </style>

@@ -1,0 +1,55 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import BlogItem from "../../components/BlogItem.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog")).sort(
+    (a, b) =>
+        (b.data.pubDate?.valueOf() || 0) - (a.data.pubDate?.valueOf() || 0),
+);
+
+// Group by year
+const postsByYear = posts.reduce(
+    (acc, post) => {
+        const year = post.data.pubDate?.getFullYear().toString() || "Unknown";
+        if (!acc[year]) acc[year] = [];
+        acc[year].push(post);
+        return acc;
+    },
+    {} as Record<string, typeof posts>,
+);
+
+const years = Object.keys(postsByYear).sort(
+    (a, b) => parseInt(b) - parseInt(a),
+);
+---
+
+<Layout title="Blog - MoRA Lab">
+    <div class="container mx-auto px-4 max-w-4xl pt-4 pb-8 md:pt-8 md:pb-16">
+        <PageHeader title="Blog" />
+
+        <div class="space-y-12">
+            {
+                years.length === 0 ? (
+                    <p class="text-gray-500">No blog posts found.</p>
+                ) : (
+                    years.map((year) => (
+                        <div class="mb-8 md:mb-10">
+                            {year !== "Unknown" && (
+                                <h2 class="text-2xl md:text-3xl font-serif font-mono text-black border-b border-gray-300 dark:border-neutral-700 pb-2 mb-3 md:mb-4 dark:text-white">
+                                    {year}
+                                </h2>
+                            )}
+                            <div class="space-y-4 md:space-y-6">
+                                {postsByYear[year].map((post) => (
+                                    <BlogItem post={post} />
+                                ))}
+                            </div>
+                        </div>
+                    ))
+                )
+            }
+        </div>
+    </div>
+</Layout>

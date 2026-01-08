@@ -1,0 +1,104 @@
+---
+title: "Multi-Robot Planning for Non-Overlapping Operator Attention Allocation"
+description: "Scheduling and Path-Planning for Operator Oversight of Multiple Robots."
+authors:
+  - "Sebastian A. Zanlongo"
+  - "Peter Dirksmeier"
+  - "Philip Long"
+  - "Franklin Abodo"
+  - "Taskin Padir"
+  - "Leonardo Bobadilla"
+---
+
+### Abstract
+
+There is a need for semi-autonomous systems capable of performing both automated tasks and supervised maneuvers. When dealing with multiple robots or robots with high complexity (such as humanoids), we face the issue of effectively coordinating multiple operators across robots. We build on our previous work to present a methodology for designing trajectories and policies for robots such that few operators can supervise multiple robots. Specifically, we: 
+1. Analyze of the complexity of the problem
+2. Provide a methodology for designing policies so that operators can oversee many robots
+3. Present a method for designing policies and robot trajectories to permit operators to oversee multiple robots
+4. Include simulation and hardware experiments demonstrating our methodologies.
+
+### Details
+
+The below videos demonstrate, using a physical environment and a virtual simulator, how robots can be rescheduled so an operator can oversee robots, without spliting their attention across multiple critical activites.
+
+### Physical Demonstration
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+    <div>
+        <h4 class="text-lg font-medium mb-2">Software Simulation</h4>
+        <div class="aspect-video w-full not-prose">
+            <iframe class="w-full h-full rounded-lg shadow-sm" src="https://www.youtube.com/embed/sjNepxbuajo" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+    <div>
+         <h4 class="text-lg font-medium mb-2">Hardware Experiment</h4>
+        <div class="aspect-video w-full not-prose">
+            <iframe class="w-full h-full rounded-lg shadow-sm" src="https://www.youtube.com/embed/cG3xOQm0F4g" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+### Valkyrie Example Cases
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+    <div>
+        <h4 class="text-lg font-medium mb-2">Initial trajectory with two attention zones</h4>
+        <div class="aspect-video w-full not-prose">
+            <iframe class="w-full h-full rounded-lg shadow-sm" src="https://www.youtube.com/embed/XBP200WBA-A" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+    <div>
+         <h4 class="text-lg font-medium mb-2">Rescheduled and re-planned trajectory with two attention zones</h4>
+        <div class="aspect-video w-full not-prose">
+            <iframe class="w-full h-full rounded-lg shadow-sm" src="https://www.youtube.com/embed/Qt27fXDBqxI" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+    <div>
+        <h4 class="text-lg font-medium mb-2">Initial trajectory with three attention zones</h4>
+        <div class="aspect-video w-full not-prose">
+            <iframe class="w-full h-full rounded-lg shadow-sm" src="https://www.youtube.com/embed/GKJyKfqrRpk" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+    <div>
+         <h4 class="text-lg font-medium mb-2">Rescheduled and re-planned trajectory with three attention zones</h4>
+        <div class="aspect-video w-full not-prose">
+            <iframe class="w-full h-full rounded-lg shadow-sm" src="https://www.youtube.com/embed/fDwo2xuaAvg" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+### Simulation Demonstration
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+    <div>
+        <h4 class="text-lg font-medium mb-2">Two Robots with Critical Sections</h4>
+        <div class="aspect-video w-full not-prose">
+            <iframe class="w-full h-full rounded-lg shadow-sm" src="https://www.youtube.com/embed/GBPwdvwb7w0?list=PLLzGu1x2MExwC1EAuVeDTuEHAlGR5GKya" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+    <div>
+         <h4 class="text-lg font-medium mb-2">Two Robots with Multiple Critical Sections</h4>
+        <div class="aspect-video w-full not-prose">
+            <iframe class="w-full h-full rounded-lg shadow-sm" src="https://www.youtube.com/embed/jfUDwTf57Bs?list=PLLzGu1x2MExwC1EAuVeDTuEHAlGR5GKya" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+    <div>
+        <h4 class="text-lg font-medium mb-2">Three Robots with Two Critical Sections</h4>
+        <div class="aspect-video w-full not-prose">
+            <iframe class="w-full h-full rounded-lg shadow-sm" src="https://www.youtube.com/embed/506dWPT00Ag" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+    <div>
+         <h4 class="text-lg font-medium mb-2">Three Robots with Multiple Critical Sections</h4>
+        <div class="aspect-video w-full not-prose">
+            <iframe class="w-full h-full rounded-lg shadow-sm" src="https://www.youtube.com/embed/IgrjOQ0hKOU?list=PLLzGu1x2MExwC1EAuVeDTuEHAlGR5GKya" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+
+export async function getStaticPaths() {
+    const blogEntries = await getCollection("blog");
+    return blogEntries.map((entry: CollectionEntry<"blog">) => ({
+        params: { slug: entry.slug },
+        props: { entry },
+    }));
+}
+
+interface Props {
+    entry: CollectionEntry<"blog">;
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<Layout>
+    <div class="min-h-screen">
+        <div
+            class="container mx-auto px-4 pt-4 pb-8 md:pt-8 md:pb-16 max-w-4xl"
+        >
+            <PageHeader title={entry.data.title} />
+
+            {
+                entry.data.authors && (
+                    <div class="mb-8 md:mb-12 -mt-4 md:-mt-8">
+                        <p class="text-lg md:text-xl font-sans text-gray-700 dark:text-gray-300 leading-relaxed">
+                            {entry.data.authors.join(", ")}
+                        </p>
+                    </div>
+                )
+            }
+
+            <div
+                class="prose max-w-none font-light leading-relaxed
+                       prose-headings:font-medium prose-headings:text-black dark:prose-headings:text-white
+                       prose-p:text-gray-800 dark:prose-p:text-gray-200
+                       prose-li:text-gray-800 dark:prose-li:text-gray-200
+                       prose-strong:text-gray-900 dark:prose-strong:text-gray-100
+                       prose-a:text-black dark:prose-a:text-white prose-a:underline prose-a:decoration-1 prose-a:underline-offset-4 hover:prose-a:decoration-2"
+            >
+                <Content />
+            </div>
+        </div>
+    </div>
+</Layout>

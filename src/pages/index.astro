@@ -1,11 +1,132 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import IndexLayout from "../layouts/IndexLayout.astro";
+import { Image } from "astro:assets";
+import fiuBg01 from "../assets/fiu-bg01.png";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const images = [fiuBg01];
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<IndexLayout>
+	<!-- Background Images -->
+	<div class="fixed inset-0 z-0 overflow-hidden bg-[#171717]">
+		{
+			images.map((img, index) => (
+				<Image
+					src={img}
+					alt={`Background ${index + 1}`}
+					class={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out opacity-0 saturate-50 brightness-75`}
+					data-bg-image
+					loading="eager"
+				/>
+			))
+		}
+		<div class="absolute inset-0 bg-black/60 z-10"></div>
+		<!-- Overlay for contrast -->
+	</div>
+
+	<!-- Content -->
+	<div
+		class="relative z-20 h-full flex flex-col justify-end pb-12 md:pb-24 px-4 container mx-auto max-w-5xl"
+	>
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 text-white">
+			<!-- Who We Are -->
+			<div class="space-y-3 md:space-y-5">
+				<h2
+					class="text-2xl md:text-3xl font-medium tracking-tight border-b border-white/30 pb-2 md:pb-3"
+				>
+					Who We Are
+				</h2>
+				<div class="prose text-gray-100 font-light leading-relaxed">
+					<p>
+						Our members are students, faculty, and affiliates of
+						Florida International University. We have diverse
+						backgrounds from a variety of academic departments
+						across engineering and science. Outstanding students who
+						share a passion for robotics and education are welcome
+						to join our group.
+					</p>
+				</div>
+				<div>
+					<a
+						href="/team"
+						class="inline-block text-sm uppercase tracking-widest border-b border-white pb-1 hover:text-gray-300 hover:border-gray-300 transition-colors"
+					>
+						Meet our team &rarr;
+					</a>
+				</div>
+			</div>
+
+			<!-- What We Do -->
+			<div class="space-y-3 md:space-y-5">
+				<h2
+					class="text-2xl md:text-3xl font-medium tracking-tight border-b border-white/30 pb-2 md:pb-3"
+				>
+					What We Do
+				</h2>
+				<div class="prose text-gray-100 font-light leading-relaxed">
+					<p>
+						Our mission is to develop autonomous systems to help
+						society. We conduct research in areas that include
+						robotics navigation, artificial intelligence models for
+						persistent ocean monitoring, and cyber-physical systems.
+						We apply this research to projects that include
+						localization and navigation of underwater robots in
+						GPS-denied environments and analysis of the
+						spatio-temporal dynamics of the ocean.
+					</p>
+				</div>
+				<div>
+					<a
+						href="/projects"
+						class="inline-block text-sm uppercase tracking-widest border-b border-white pb-1 hover:text-gray-300 hover:border-gray-300 transition-colors"
+					>
+						See our work &rarr;
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</IndexLayout>
+
+<script>
+	let intervalId: ReturnType<typeof setInterval> | null = null;
+
+	function initHeroSlider() {
+		const images = document.querySelectorAll("[data-bg-image]");
+		let currentIndex = 0;
+
+		if (images.length > 0) {
+			// Show first image immediately
+			images.forEach((img) => {
+				img.classList.remove("opacity-100");
+				img.classList.add("opacity-0");
+			});
+			images[0].classList.remove("opacity-0");
+			images[0].classList.add("opacity-100");
+
+			if (intervalId) clearInterval(intervalId);
+
+			if (images.length > 1) {
+				intervalId = setInterval(() => {
+					const nextIndex = (currentIndex + 1) % images.length;
+
+					// Fade out current
+					images[currentIndex].classList.remove("opacity-100");
+					images[currentIndex].classList.add("opacity-0");
+
+					// Fade in next
+					images[nextIndex].classList.remove("opacity-0");
+					images[nextIndex].classList.add("opacity-100");
+
+					currentIndex = nextIndex;
+				}, 5000); // Change every 5 seconds
+			}
+		}
+	}
+
+	// Run on initial load and after View Transitions
+	document.addEventListener("astro:page-load", initHeroSlider);
+	document.addEventListener("astro:before-swap", () => {
+		if (intervalId) clearInterval(intervalId);
+	});
+</script>

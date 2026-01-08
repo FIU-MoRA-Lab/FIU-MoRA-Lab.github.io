@@ -1,0 +1,46 @@
+@import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
+@plugin "@tailwindcss/typography";
+
+@layer base {
+    :root {
+        /* Light Mode (Stone-50 / Gray-900) */
+        --color-bg-primary: #f2f2f2;
+        --color-text-primary: #111827;
+        --color-border: #e5e7eb;
+
+        /* Navbar/Footer Colors */
+        --color-nav-text-active: #111827;
+        --color-nav-text-inactive: #4b5563;
+
+        /* Electric Teal (Teal-600) */
+        --color-highlight: #0d9488;
+    }
+
+    /* Dark Mode (Neutral-900 / Neutral-50) */
+    :root.dark {
+        --color-bg-primary: #171717;
+        --color-text-primary: #fafafa;
+        --color-border: #262626;
+
+        --color-nav-text-active: #ffffff;
+        --color-nav-text-inactive: #d4d4d4;
+
+        /* Electric Teal (Teal-400) */
+        --color-highlight: #2dd4bf;
+    }
+
+    body {
+        background-color: var(--color-bg-primary);
+        color: var(--color-text-primary);
+        transition-property: background-color, color, border-color;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 300ms;
+    }
+
+    .prose {
+        --tw-prose-bullets: var(--color-highlight);
+    }
+}
+
+@layer utilities {}
