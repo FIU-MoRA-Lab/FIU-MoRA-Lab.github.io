@@ -13,8 +13,8 @@
         --color-nav-text-active: #111827;
         --color-nav-text-inactive: #4b5563;
 
-        /* Soft Teal - Professional/Ocean */
-        --color-highlight: #2a9d8f;
+        /* Medium Teal - Professional/Ocean */
+        --color-highlight: #0d9488;
     }
 
     /* Dark Mode (Neutral-900 / Neutral-50) */
@@ -26,8 +26,8 @@
         --color-nav-text-active: #ffffff;
         --color-nav-text-inactive: #d4d4d4;
 
-        /* Soft Flamingo Pink */
-        --color-highlight: #ff8fab;
+        /* Light Teal */
+        --color-highlight: #5eead4;
     }
 
     body {
