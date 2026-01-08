@@ -58,13 +58,13 @@ import Navbar from "../components/Navbar.astro";
         </script>
     </head>
     <body
-        class="antialiased font-sans selection:bg-gray-200 selection:text-black bg-[#171717]"
+        class="antialiased font-sans selection:bg-gray-200 selection:text-black bg-[#171717] flex flex-col min-h-screen"
     >
         <!-- Overlay Header -->
         <div class="absolute top-0 left-0 w-full z-50">
             <Navbar />
         </div>
-        <main class="w-full h-screen relative">
+        <main class="w-full flex-1 relative">
             <slot />
         </main>
     </body>

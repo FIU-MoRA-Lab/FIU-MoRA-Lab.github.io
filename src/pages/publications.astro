@@ -35,7 +35,7 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
     <div class="container mx-auto px-4 max-w-4xl pt-4 pb-8 md:pt-8 md:pb-16">
         <PageHeader title="Publications" />
 
-        <div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        <div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 items-start">
             <div id="author-filters" class="w-full md:col-span-2">
                 <details class="group">
                     <summary class="flex items-center justify-between cursor-pointer list-none select-none mb-4 bg-gray-50 dark:bg-neutral-900 p-2 rounded-lg" style="cursor: pointer;">
