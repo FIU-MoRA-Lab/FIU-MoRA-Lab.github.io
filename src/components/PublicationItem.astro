@@ -70,7 +70,7 @@ const authorSlugs = pub.authors.map((author) => normalizeName(author));
                                     class={`author-name transition-colors duration-300 ${isHighlighted ? "text-[var(--color-highlight)] font-bold" : ""}`}
                                     data-author-slug={normalizedAuthor}
                                 >
-                                    {author}
+                                    {author.trim()}
                                 </span>
                                 {index < pub.authors.length - 1 ? " · " : ""}
                             </>
