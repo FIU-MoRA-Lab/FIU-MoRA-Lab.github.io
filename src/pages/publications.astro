@@ -26,9 +26,9 @@ const authors = teamMembers
             slug: normalizeName(member.data.name),
             color: baseColor,
             // Light Mode -> Darker colors (for contrast on white background)
-            colorLight: chroma(baseColor).darken(1.5).hex(),
-            // Dark Mode -> Lighter colors (for contrast on dark background)
-            colorDark: chroma(baseColor).brighten(1.5).hex(),
+            colorLight: chroma(baseColor).darken(1.8).hex(),
+            // Dark Mode -> Almost White Pastel (Lighter text request)
+            colorDark: chroma(baseColor).set('hsl.s', 0.3).set('hsl.l', 0.65).hex(),
         };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -75,8 +75,11 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
                                     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
                                 };
 
-                                const bgLight = getRgba(author.colorLight, 0.15);
-                                const bgDark = getRgba(author.colorDark, 0.25); // Slightly more opaque for dark mode
+                                // Light Mode: Dark Text, Light BG
+                                const bgLight = getRgba(author.colorLight, 0.25);
+                                
+                                // Dark Mode: Light Text, Subtle BG
+                                const bgDark = getRgba(author.colorDark, 0.2);
 
                                 return (
                                     <label class="relative cursor-pointer select-none group">
@@ -101,29 +104,6 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
                                         >
                                             {author.name}
                                         </span>
-                                        <style>
-                                            /* Apply hover effects only when NOT checked */
-                                            input:not(:checked) + .author-chip:hover {
-                                                background-color: #e0e0e0 !important;
-                                            }
-                                            
-                                            /* Dark mode hover - only when NOT checked */
-                                            :root.dark input:not(:checked) + .author-chip:hover {
-                                                background-color: rgb(38 38 38) !important; /* dark:hover:bg-neutral-800 */
-                                            }
-                                            
-                                            /* Checked behavior using CSS variables */
-                                            input:checked + .author-chip {
-                                                background-color: var(--author-bg-light) !important;
-                                                border-color: transparent !important;
-                                                color: var(--author-text-light) !important;
-                                            }
-
-                                            :global(.dark) input:checked + .author-chip {
-                                                background-color: var(--author-bg-dark) !important;
-                                                color: var(--author-text-dark) !important;
-                                            }
-                                        </style>
                                     </label>
                                 );
                             })
@@ -198,7 +178,30 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
 </Layout>
 
 <style>
-    /* Global styles for dynamic author highlights */
+    /* Author Filter Chip Styles */
+    
+    /* Hover effects (Unchecked) */
+    .author-checkbox:not(:checked) + .author-chip:hover {
+        background-color: #e0e0e0 !important;
+    }
+
+    :global(.dark) .author-checkbox:not(:checked) + .author-chip:hover {
+        background-color: rgb(38 38 38) !important;
+    }
+
+    /* Checked State */
+    .author-checkbox:checked + .author-chip {
+        background-color: var(--author-bg-light) !important;
+        border-color: transparent !important;
+        color: var(--author-text-light) !important;
+    }
+
+    :global(.dark) .author-checkbox:checked + .author-chip {
+        background-color: var(--author-bg-dark) !important;
+        color: var(--author-text-dark) !important;
+    }
+
+    /* Global styles for dynamic author highlights in the list */
     :global(.author-name.selected-author) {
         background-color: var(--author-bg-light) !important;
         color: var(--author-text-light) !important;
