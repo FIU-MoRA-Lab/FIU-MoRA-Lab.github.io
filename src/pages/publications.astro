@@ -325,10 +325,13 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
 
             // Only attach event listeners if we haven't already
             // Check if listeners are already attached by using a data attribute
-            const isInitialized = document.body.dataset.publicationsInitialized;
-            if (isInitialized) {
-                return;
-            }
+            // We removed the initialization check because with View Transitions, 
+            // the elements are replaced but the body attribute might persist or the script 
+            // logic needs to re-run for new elements anyway.
+            // const isInitialized = document.body.dataset.publicationsInitialized;
+            // if (isInitialized) {
+            //     return;
+            // }
 
             authorCheckboxes.forEach((cb) => {
                 cb.addEventListener("change", updateFilters);
@@ -338,7 +341,7 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
             });
 
             // Mark as initialized
-            document.body.dataset.publicationsInitialized = "true";
+            // document.body.dataset.publicationsInitialized = "true";
         });
     }
 
