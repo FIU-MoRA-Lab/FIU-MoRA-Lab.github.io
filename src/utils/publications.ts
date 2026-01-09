@@ -2,6 +2,9 @@ const DBLP_PID = '43/2125';
 const DBLP_BIB_URL = `https://dblp.org/pid/${DBLP_PID}.bib`;
 const MIN_YEAR = 2014;
 
+// @ts-ignore
+import bibtexParse from '@orcid/bibtex-parse-js';
+
 export interface Publication {
     type: string;
     key: string;
@@ -14,100 +17,150 @@ export interface Publication {
     bibtex: string;
 }
 
-function clean(val: string) {
+function decodeLatex(val: string): string {
     if (!val) return "";
-    let s = val.trim();
-    // Remove outer braces/quotes
-    if ((s.startsWith('{') && s.endsWith('}')) || (s.startsWith('"') && s.endsWith('"'))) {
-        s = s.slice(1, -1);
+    let str = val;
+    let previous = "";
+    let loopCount = 0;
+
+    // Loop to handle nested braces and repeated cleanups
+    while (str !== previous && loopCount < 10) {
+        previous = str;
+        loopCount++;
+
+        // 1. Remove non-functional braces around decoded chars or simple text
+        // e.g. {a} -> a, {XR} -> XR
+        // We use a regex that matches braces containing NO OTHER BRACES inside
+        str = str.replace(/\{([^{}\\]+)\}/g, '$1');
+
+        // 2. Decode specific accents
+        // Matches: \'{a}, \'a, \"{u}, \"u, etc.
+        // We handle standard single-character LaTeX accents
+        str = str.replace(/\\(['"`^~=.])(?:\{([a-zA-Z])\}|([a-zA-Z]))/g, (_match, accent, char1, char2) => {
+            const char = char1 || char2;
+            const map: Record<string, string> = {
+                "'": "\u0301", // acute
+                "\"": "\u0308", // umlaut
+                "`": "\u0300", // grave
+                "^": "\u0302", // circumflex
+                "~": "\u0303", // tilde
+                "=": "\u0304", // macron
+                ".": "\u0307", // dot
+            };
+            return (char + (map[accent] || "")).normalize('NFC');
+        });
+
+        // Handle \c{c} or \c c (cedilla)
+        str = str.replace(/\\c(?:\{([a-zA-Z])\}|\s+([a-zA-Z]))/g, (match, char1, char2) => {
+            const char = char1 || char2;
+            if (char.toLowerCase() === 'c') return char === 'c' ? 'ç' : 'Ç';
+            return match;
+        });
+
+        // Handle special chars
+        str = str.replace(/\\_/g, '_');
+        str = str.replace(/\\&/g, '&');
+        // escaped whitespace
+        str = str.replace(/\\ /g, ' ');
+
+        // Clean up any double whitespace introduced
+        str = str.replace(/\s+/g, ' ');
     }
-    // Remove remaining braces
-    s = s.replace(/[{}]/g, '');
-    // Remove BibTeX escape sequences (backslashes before special characters)
-    s = s.replace(/\\(.)/g, '$1');
-    return s.replace(/\s+/g, ' ').trim();
+
+    return str.trim();
 }
 
-function parseBibTex(text: string): Publication[] {
-    const entries: Publication[] = [];
-    const normalized = text.replace(/\r\n/g, '\n');
+function clean(val: string) {
+    if (!val) return "";
+    // First, decode any LaTeX entities
+    let s = decodeLatex(val);
 
-    // Split by '@' ensuring we capture the entry type start
-    // Splitting by '@' will give chunks where each chunk starts with the entry body
-    // e.g. "article{..."
-    const rawEntries = normalized.split('@');
+    // Remove BibTeX escape sequences (backslashes before special characters) if any remain
+    // e.g. escaping that wasn't handled by decode
+    // But be careful not to strip valid chars.
+    // decodeLatex handles most usage. 
 
-    for (const raw of rawEntries) {
-        const trimmed = raw.trim();
-        if (!trimmed) continue;
+    return s.trim();
+}
 
-        // Match type and key
-        // e.g. article{DBLP:journals/..., or just article{...
-        // The split consumed the '@', so we expect the type immediately
-        const firstLineMatch = trimmed.match(/^([a-zA-Z]+)\s*\{\s*([^,]+),/);
-        if (!firstLineMatch) continue;
+export function parseBibTex(text: string): Publication[] {
+    try {
+        const parsed = bibtexParse.toJSON(text);
+        if (!Array.isArray(parsed)) return [];
 
-        const type = firstLineMatch[1];
-        const key = firstLineMatch[2];
+        const entries: Publication[] = [];
 
-        // Helper to extract field
-        const getField = (name: string) => {
-            // Field = {value} or "value"
-            const regex = new RegExp(`${name}\\s*=\\s*[\\{"](.*?)[\\}"]\\s*[,}]`, 'is');
-            const match = trimmed.match(regex);
-            if (match) return clean(match[1]);
+        for (const entry of parsed) {
+            const tags = entry.entryTags || {};
+            const key = entry.citationKey;
+            const type = entry.entryType;
 
-            // Field = value (numeric or string without quotes)
-            const regexSimple = new RegExp(`${name}\\s*=\\s*([^,}\\s]+)`, 'i');
-            const matchSimple = trimmed.match(regexSimple);
-            return matchSimple ? clean(matchSimple[1]) : "";
-        };
+            // Filter out CoRR (arXiv) entries if desired, mirroring original logic
+            const venueRaw = tags.journal || tags.booktitle || tags.school || "";
+            if (venueRaw.toLowerCase().includes('corr') || key.toLowerCase().includes('corr/')) continue;
+            if (tags.eprinttype && tags.eprinttype.toLowerCase() === 'arxiv') continue;
 
-        const title = getField('title');
-        const yearStr = getField('year');
-        const year = parseInt(yearStr);
+            const yearStr = tags.year;
+            const year = parseInt(yearStr);
+            if (isNaN(year) || year < MIN_YEAR) continue;
 
-        if (isNaN(year) || year < MIN_YEAR) continue;
+            const title = clean(tags.title || "");
 
-        const venue = getField('journal') || getField('booktitle') || getField('school') || "";
+            // Clean authors
+            // DBLP often separates by " and "
+            const authorRaw = tags.author || "";
+            // Replace newlines with spaces before splitting
+            const normalizedAuthorRaw = authorRaw.replace(/\r?\n/g, ' ');
+            const authors = normalizedAuthorRaw
+                .split(/\s+and\s+/i)
+                .map(clean)
+                .filter((a: string) => a.length > 0);
 
-        // Filter out CoRR (arXiv)
-        if (venue.toLowerCase().includes('corr') || key.toLowerCase().includes('corr/')) continue;
+            const venue = clean(venueRaw);
 
-        const authorStr = getField('author');
-        // DBLP uses " and "
-        const authors = authorStr ? authorStr.split(/\s+and\s+/i).map(clean) : [];
-
-        // Extract DOI - use raw value to preserve URLs
-        const getDoiField = () => {
-            // Field = {value} or "value"
-            const regex = /doi\s*=\s*[\{"](.*?)[}\"][\s,}]/is;
-            const match = trimmed.match(regex);
-            if (match) {
-                const value = match[1].trim();
-                // If it's a URL, return as-is; otherwise clean it
-                if (value.startsWith('http')) {
-                    return value;
-                }
-                return clean(value);
+            // DOI URL construction or cleaning
+            let doi = tags.doi || "";
+            // Sometimes doi field is a full URL, sometimes just 10.xxx/...
+            // Original logic: "If value starts with http, return as is"
+            if (doi && !doi.startsWith('http')) {
+                doi = clean(doi);
             }
-            return "";
-        };
-        const doiValue = getDoiField();
 
-        entries.push({
-            type,
-            key,
-            title,
-            authors,
-            year: String(year),
-            venue,
-            url: getField('url'),
-            doi: doiValue,
-            bibtex: `@${trimmed}`
-        });
+            // Reconstruct bibtex (or use what we have, but the library parses to JSON)
+            // The library doesn't easily give back the original raw chunk per entry.
+            // We can reconstruct a simple one or try to slice it from original text if needed.
+            // But 'bibtex' field in Publication interface seems to be used for "Copy BibTeX" feature.
+            // We can reconstruct it from the parsed object or try to find it in text.
+            // Finding in text is brittle. Let's reconstruct a standard BibTeX string.
+
+            const makeBibtex = () => {
+                let s = `@${type}{${key},\n`;
+                for (const [k, v] of Object.entries(tags)) {
+                    s += `  ${k} = {${v}},\n`;
+                }
+                s += `}`;
+                return s;
+            };
+
+            entries.push({
+                type,
+                key,
+                title,
+                authors,
+                year: String(year),
+                venue,
+                url: tags.url, // Keep URL as is
+                doi,
+                bibtex: makeBibtex()
+            });
+        }
+
+        return entries;
+
+    } catch (e) {
+        console.error("Error parsing BibTeX with library:", e);
+        return [];
     }
-    return entries;
 }
 
 // Simple in-memory cache
