@@ -22,7 +22,7 @@ const authors = teamMembers
     .map((member, index) => {
         const baseColor = palette[index];
         return {
-            name: member.data.name,
+            name: member.data.name.trim(),
             slug: normalizeName(member.data.name),
             color: baseColor,
             // Light Mode -> Darker colors (for contrast on white background)
@@ -101,9 +101,7 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
                                                 --author-text-dark: ${author.colorDark};
                                                 --author-bg-dark: ${bgDark};
                                             `}
-                                        >
-                                            {author.name}
-                                        </span>
+                                        >{author.name.trim()}</span>
                                     </label>
                                 );
                             })
