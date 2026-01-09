@@ -33,7 +33,7 @@ const { project, compact = false } = Astro.props;
         <Image
             src={project.image}
             alt={project.title}
-            class="w-full h-auto object-cover grayscale hover:grayscale-0 transition-all duration-500 rounded-sm shadow-sm"
+            class="w-full h-auto object-cover grayscale-0 md:grayscale md:hover:grayscale-0 transition-all duration-500 rounded-sm shadow-sm"
             inferSize={true}
         />
     </div>

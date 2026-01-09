@@ -54,14 +54,9 @@ type TeamEntry = CollectionEntry<"team">;
 
 <style>
     .responsive-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
     @media (min-width: 768px) {
-        .responsive-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-    @media (min-width: 1024px) {
         .responsive-grid {
             grid-template-columns: repeat(3, 1fr);
         }

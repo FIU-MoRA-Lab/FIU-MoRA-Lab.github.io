@@ -33,14 +33,14 @@ const modalId = `modal-${person.name.toLowerCase().replace(/\s+/g, "-")}`;
             <Image
                 src={person.image}
                 alt={person.name}
-                class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                class="w-full h-full object-cover grayscale-0 md:grayscale md:group-hover:grayscale-0 transition-all duration-500"
             />
             <!-- 
                 Swipe Bar Animation 
                 Appears at the bottom of the IMAGE.
             -->
             <div
-                class="absolute bottom-0 left-0 w-full h-[3px] bg-[var(--color-highlight)] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out z-20"
+                class="absolute bottom-0 left-0 w-full h-[3px] bg-[var(--color-highlight)] transform translate-x-0 md:-translate-x-full md:group-hover:translate-x-0 transition-transform duration-500 ease-out z-20"
             >
             </div>
         </div>
@@ -64,12 +64,12 @@ const modalId = `modal-${person.name.toLowerCase().replace(/\s+/g, "-")}`;
                     style="font-size: 7cqi; line-height: 1.1;"
                 >
                     <span
-                        class="transition-[font-variation-settings,color] duration-300 [font-variation-settings:'wght'_400] group-hover:[font-variation-settings:'wght'_700] group-hover:text-[var(--color-highlight)]"
+                        class="transition-[font-variation-settings,color] duration-300 [font-variation-settings:'wght'_700] text-[var(--color-highlight)] md:[font-variation-settings:'wght'_400] md:text-gray-900 md:dark:text-white md:group-hover:[font-variation-settings:'wght'_700] md:group-hover:text-[var(--color-highlight)]"
                     >
                         {person.name}
                     </span>
                     <span
-                        class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 italic font-normal text-[var(--color-highlight)] font-serif whitespace-nowrap shrink-0 ml-2"
+                        class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 italic font-normal text-[var(--color-highlight)] font-serif whitespace-nowrap shrink-0 ml-2"
                         style="font-size: 6cqi;"
                     >
                         About &rarr;
