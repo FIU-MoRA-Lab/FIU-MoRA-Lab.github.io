@@ -53,13 +53,21 @@ const isIndexPage = currentPath === '/' || currentPath === '';
             <!-- Right Side: Navigation + Toggle -->
             <div 
                 id="menu-content" 
-                class="hidden md:flex flex-col md:flex-row items-center gap-6 md:gap-8 lg:gap-12 md:w-auto absolute md:static left-4 right-4 md:left-auto md:right-auto top-4 md:top-auto bg-[var(--color-bg-primary)] md:bg-transparent p-6 md:p-0 border border-gray-200 dark:border-[#333] md:border-0 rounded-2xl md:rounded-none shadow-xl md:shadow-none z-50 md:z-auto"
+                class:list={[
+                    "hidden md:flex flex-col md:flex-row items-center gap-6 md:gap-8 lg:gap-12 md:w-auto absolute md:static left-4 right-4 md:left-auto md:right-auto top-4 md:top-auto p-6 md:p-0 border md:border-0 rounded-2xl md:rounded-none shadow-xl md:shadow-none z-50 md:z-auto",
+                    isIndexPage 
+                        ? "bg-[#171717] border-[#333] md:bg-transparent" 
+                        : "bg-[var(--color-bg-primary)] border-gray-200 dark:border-[#333] md:bg-transparent"
+                ]}
             >
                 <!-- Mobile Close Button -->
                 <div class="w-full flex justify-end md:hidden mb-4">
                     <button 
                         id="menu-close" 
-                        class="text-gray-800 dark:text-gray-200 focus:outline-none"
+                        class:list={[
+                            "focus:outline-none",
+                            isIndexPage ? "text-gray-200" : "text-gray-800 dark:text-gray-200"
+                        ]}
                         aria-label="Close Navigation"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

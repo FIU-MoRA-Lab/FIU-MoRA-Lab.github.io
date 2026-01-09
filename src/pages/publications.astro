@@ -19,11 +19,18 @@ const palette = chroma
     .sort(() => Math.random() - 0.5);
 
 const authors = teamMembers
-    .map((member, index) => ({
-        name: member.data.name,
-        slug: normalizeName(member.data.name),
-        color: palette[index],
-    }))
+    .map((member, index) => {
+        const baseColor = palette[index];
+        return {
+            name: member.data.name,
+            slug: normalizeName(member.data.name),
+            color: baseColor,
+            // Light Mode -> Darker colors (for contrast on white background)
+            colorLight: chroma(baseColor).darken(1.5).hex(),
+            // Dark Mode -> Lighter colors (for contrast on dark background)
+            colorDark: chroma(baseColor).brighten(1.5).hex(),
+        };
+    })
     .sort((a, b) => a.name.localeCompare(b.name));
 
 const years = [...new Set(publications.map((p) => p.year))].sort(
@@ -60,13 +67,16 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
                     <div class="flex flex-wrap gap-1 md:gap-2 p-4 rounded-lg bg-neutral-50 dark:bg-neutral-900 animate-in fade-in zoom-in-95 duration-200 mt-2">
                         {
                             authors.map((author) => {
-                                // Pre-calculate rgba for inline styles to ensure consistnecy with the script logic
-                                // Simple hex to rgba (assuming hex is #RRGGBB) - this logic is duplicated but robust enough for this view
-                                const hex = author.color;
-                                const r = parseInt(hex.slice(1, 3), 16);
-                                const g = parseInt(hex.slice(3, 5), 16);
-                                const b = parseInt(hex.slice(5, 7), 16);
-                                const rgba = `rgba(${r}, ${g}, ${b}, 0.15)`;
+                                // Helper to get RGBA from hex with opacity
+                                const getRgba = (hex: string, opacity: number) => {
+                                    const r = parseInt(hex.slice(1, 3), 16);
+                                    const g = parseInt(hex.slice(3, 5), 16);
+                                    const b = parseInt(hex.slice(5, 7), 16);
+                                    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+                                };
+
+                                const bgLight = getRgba(author.colorLight, 0.15);
+                                const bgDark = getRgba(author.colorDark, 0.25); // Slightly more opaque for dark mode
 
                                 return (
                                     <label class="relative cursor-pointer select-none group">
@@ -74,11 +84,20 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
                                             type="checkbox"
                                             value={author.slug}
                                             data-color={author.color}
+                                            data-color-light={author.colorLight}
+                                            data-color-dark={author.colorDark}
+                                            data-bg-light={bgLight}
+                                            data-bg-dark={bgDark}
                                             class="author-checkbox peer sr-only"
                                         />
                                         <span 
                                             class="author-chip block px-2 py-1 text-sm rounded transition-all duration-200 text-gray-700 dark:text-gray-300 bg-[#fafafa] dark:bg-neutral-900 font-medium"
-                                            style={`--author-color: ${author.color}; --author-bg: ${rgba};`}
+                                            style={`
+                                                --author-text-light: ${author.colorLight};
+                                                --author-bg-light: ${bgLight};
+                                                --author-text-dark: ${author.colorDark};
+                                                --author-bg-dark: ${bgDark};
+                                            `}
                                         >
                                             {author.name}
                                         </span>
@@ -93,11 +112,16 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
                                                 background-color: rgb(38 38 38) !important; /* dark:hover:bg-neutral-800 */
                                             }
                                             
-                                            /* Inline style for dynamic peer-checked behavior with specific colors */
+                                            /* Checked behavior using CSS variables */
                                             input:checked + .author-chip {
-                                                background-color: var(--author-bg) !important;
-                                                border-color: transparent !important; /* Remove border to match text highlight style */
-                                                color: var(--author-color) !important;
+                                                background-color: var(--author-bg-light) !important;
+                                                border-color: transparent !important;
+                                                color: var(--author-text-light) !important;
+                                            }
+
+                                            :global(.dark) input:checked + .author-chip {
+                                                background-color: var(--author-bg-dark) !important;
+                                                color: var(--author-text-dark) !important;
                                             }
                                         </style>
                                     </label>
@@ -170,7 +194,25 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
 
         <PublicationsList publications={publications} />
     </div>
+    </div>
 </Layout>
+
+<style>
+    /* Global styles for dynamic author highlights */
+    :global(.author-name.selected-author) {
+        background-color: var(--author-bg-light) !important;
+        color: var(--author-text-light) !important;
+        padding: 0.125rem 0.25rem;
+        border-radius: 0.25rem;
+        font-weight: 500; /* font-medium */
+        cursor: default;
+    }
+
+    :global(.dark .author-name.selected-author) {
+        background-color: var(--author-bg-dark) !important;
+        color: var(--author-text-dark) !important;
+    }
+</style>
 
 <script>
     function initPublications() {
@@ -237,27 +279,30 @@ const years = [...new Set(publications.map((p) => p.year))].sort(
                         const elSpan = span as HTMLElement;
                         const spanSlug = elSpan.dataset.authorSlug;
                         
-                        // Reset styles first
-                        elSpan.style.backgroundColor = "";
-                        elSpan.style.color = "";
-                        elSpan.style.padding = "";
-                        elSpan.classList.remove("rounded", "font-medium", "text-white");
+                        // Reset styles
+                        elSpan.style.removeProperty("--author-text-light");
+                        elSpan.style.removeProperty("--author-bg-light");
+                        elSpan.style.removeProperty("--author-text-dark");
+                        elSpan.style.removeProperty("--author-bg-dark");
+                        elSpan.classList.remove("selected-author");
 
                         if (spanSlug && selectedAuthorSlugs.includes(spanSlug)) {
-                            // Apply specific color pill
-                            const color = authorColors[spanSlug];
+                            // Apply specific color vars
+                            // We need to look up the data from the checkbox since we didn't store it in the authorColors map with all details
+                            // Let's grab it from the DOM element we matched earlier or rely on authorColors if we structured it
+                            // For simplicity, let's re-query or better, store complex objects in authorColors
                             
-                            // Simple hex to rgba inline
-                            const r = parseInt(color.slice(1, 3), 16);
-                            const g = parseInt(color.slice(3, 5), 16);
-                            const b = parseInt(color.slice(5, 7), 16);
+                            // Re-find key
+                            const checkbox = document.querySelector(`.author-checkbox[value="${spanSlug}"]`) as HTMLInputElement;
+                            if (checkbox) {
+                                elSpan.style.setProperty("--author-text-light", checkbox.dataset.colorLight || "");
+                                elSpan.style.setProperty("--author-bg-light", checkbox.dataset.bgLight || "");
+                                elSpan.style.setProperty("--author-text-dark", checkbox.dataset.colorDark || "");
+                                elSpan.style.setProperty("--author-bg-dark", checkbox.dataset.bgDark || "");
+                                
+                                elSpan.classList.add("selected-author");
+                            }
                             
-                            elSpan.style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.15)`;
-                            elSpan.style.color = color;
-                            elSpan.style.cursor = "default";
-                            elSpan.style.padding = "0.125rem 0.25rem";
-                            
-                            elSpan.classList.add("rounded", "font-medium");
                             // Remove global highlight class
                             elSpan.classList.remove("text-[var(--color-highlight)]", "font-bold");
                         } else if (spanSlug) {
